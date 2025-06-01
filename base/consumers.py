@@ -22,7 +22,7 @@ class CashienChatConsumer(AsyncWebsocketConsumer):
         env_vars = get_running_values()
         
         try:
-            cookie = self.scope['cookies']['token']
+            cookie = self.scope["url_route"]["kwargs"]["auth_cookie"]
         except:
             cookie = ""
 
