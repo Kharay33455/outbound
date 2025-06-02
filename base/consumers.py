@@ -39,6 +39,8 @@ class CashienChatConsumer(AsyncWebsocketConsumer):
 
     # Receive message from WebSocket
     async def receive(self, text_data):
+        import time
+        
         text_data_json = json.loads(text_data)
         if text_data_json['type'] == "new_text":
             message = text_data_json["text"]
