@@ -31,9 +31,9 @@ if os.getenv("DEBUG") == "FALSE":
 elif os.getenv("DEBUG") == "TRUE":
     DEBUG = True
 
-ALLOWED_HOSTS = ["*"]
+ALLOWED_HOSTS = os.getenv("AH").split(",")
 
-
+CSRF_TRUSTED_ORIGINS = os.getenv("CTO").split(",")
 # Application definition
 
 INSTALLED_APPS = [
