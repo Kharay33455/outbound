@@ -1,0 +1,34 @@
+{% extends 'base/cashien_base.html' %}
+{% block content %}
+<div>
+    <div class="list-group">
+        {% for trade in trades %}
+        {% if trade.is_disputed %}
+            <a href="{% url 'base:cashien_dispute_list' auth_cookie trade.tradeId %}" class="list-group-item list-group-item-action active" aria-current="true">
+        {% else %}
+            <a href="{% url 'base:cashien_dispute_list' auth_cookie trade.tradeId %}" class="list-group-item list-group-item-action" aria-current="true">
+
+        {% endif %}
+                <div class="d-flex w-100 justify-content-between">
+                    <h5 class="mb-1">{{trade.tradeId}}</h5>
+                    <small>{{trade.time}}</small>
+                </div>
+                <p class="mb-1">{{trade.buyerId}} buying {{trade.amount}} USDT from {{trade.sellerId}} at
+
+                    {{trade.rates}}
+
+                    {% if trade.currency == '1' %}
+                        USD
+                    {% elif trade.currency == '2' %}
+                        CNY
+                    {% elif trade.curreny == "3" %}
+                        EUR
+                    {% endif %}
+                    /USDT</p>
+                <small>{{trade.bank_name}}</small>
+            </a>
+            <br /><br />
+            {% endfor %}
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,53 @@
+{% extends 'base/cashien_base.html' %}
+{% block content %}
+<div>
+
+
+    <script>
+        let user = undefined;
+
+        const AuthAdmin = async () => {
+            const username = document.getElementById("usernameInput").value;
+            const password = document.getElementById("passwordInput").value;
+            const bh = document.getElementById('bh').value
+            try {
+                const response = await fetch(bh + "/cashien/auth-cashien-admin", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify({ 'username': username, "password": password })
+                })
+                const results = await response.json();
+                if (response.status == 200) {
+                    document.getElementById("key").innerHTML = results['msg'];
+                    document.getElementById("instruction").style.opacity = "1";
+                } else {
+                    alert(results['msg'])
+                }
+            } catch (error) {
+                alert("unexoected error, contact dev with code errorCode6813");
+            }
+        }
+    </script>
+
+
+    <p style="opacity:0" id="instruction">
+        Copy this key below and append it to your url "www.homepage/cashien/dispute/key"
+    </p>
+    <p id="key">
+
+    </p>
+
+
+    <div>
+        <input value={{env.bh}} id="bh" hidden />
+        <input placeholder="Username" id="usernameInput" /> <br />
+        <input placeholder="Password" id="passwordInput" /> <br />
+        <button onclick="AuthAdmin()">
+            Submit
+        </button>
+    </div>
+</div>
+
+{% endblock %}

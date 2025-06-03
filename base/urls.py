@@ -5,4 +5,7 @@ app_name = "base"
 
 urlpatterns = [
     path("", index, name="index"),
+    path("cashien/dispute", cashien_dispute_chat, name="cashien_dispute"),
+    path("cashien/dispute/<slug:auth_cookie>/<slug:trade_id>", cashien_dispute_list, name='cashien_dispute_list'),
+    
 ]

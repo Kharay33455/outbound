@@ -1,0 +1,28 @@
+.center {
+    display: grid
+}
+
+.horizontally {
+    justify-content: center;
+}
+
+.vertically {
+    align-items: center
+}
+
+.msgWrapper{
+    border:1px solid black;
+    margin-bottom :2vh
+}
+#msgBox{
+    max-height:80vh;
+    overflow-y:scroll;
+}
+.sender{
+    color:gray;
+    font-size:0.8em;
+}
+
+.msgImg{
+    width:60vw;
+}
