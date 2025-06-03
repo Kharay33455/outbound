@@ -20,24 +20,28 @@
                 })
                 const results = await response.json();
                 if (response.status == 200) {
-                    document.getElementById("key").innerHTML = results['msg'];
-                    document.getElementById("instruction").style.opacity = "1";
+                    const inst = document.getElementById("instruction");
+                    const link = document.createElement("a");
+                    link.href = "/cashien/dispute/" + results['msg'] + "/all"
+                    inst.appendChild(link);
+                    link.innerHTML = "LINK"
+                    inst.style.opacity = "1";
                 } else {
                     alert(results['msg'])
                 }
             } catch (error) {
+                console.log(error)
                 alert("unexoected error, contact dev with code errorCode6813");
             }
         }
     </script>
 
+<div style="opacity:0" id="instruction">
+    <span >
+        Copy or click on this link to access disputes
+    </span>
 
-    <p style="opacity:0" id="instruction">
-        Copy this key below and append it to your url "www.homepage/cashien/dispute/key"
-    </p>
-    <p id="key">
-
-    </p>
+</div>
 
 
     <div>
