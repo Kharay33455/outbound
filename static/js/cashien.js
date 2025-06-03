@@ -67,7 +67,7 @@ const Init = () => {
         ws = new WebSocket("ws://" + window.location.host + "/ws/cashien/dispute/" + trade_id + "/" + auth_cookie + "/");
 
     } else {
-        ws = new WebSocket("ws://" + window.location.host + "/ws/cashien/dispute/" + trade_id + "/" + auth_cookie + "/");
+        ws = new WebSocket("wss://" + window.location.host + "/ws/cashien/dispute/" + trade_id + "/" + auth_cookie + "/");
     }
     ws.onmessage = (e) => {
         const data = JSON.parse(e.data);
