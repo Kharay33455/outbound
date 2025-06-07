@@ -142,6 +142,20 @@ STATICFILES_DIRS=[BASE_DIR / "static"]
 STATIC_ROOT = os.path.join(BASE_DIR, "staticfiles")
 
 
+
+# settings.py
+
+EMAIL_BACKEND = os.getenv("EB")
+EMAIL_HOST = os.getenv("EH")
+EMAIL_PORT = int(os.getenv("EP"))
+if os.getenv("EUTLS") == "TRUE":
+    EMAIL_USE_TLS = True
+elif os.getenv("EUTLS") == "FALSE":
+    EMAIL_USE_TLS = False
+EMAIL_HOST_USER = os.getenv("EHU")
+EMAIL_HOST_PASSWORD = os.getenv("EHP")
+
+
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field
 

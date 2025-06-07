@@ -1,12 +1,23 @@
+from django.core.mail import send_mail
 from django.shortcuts import render
 from .consumers import get_running_values
 from django.http import JsonResponse, HttpResponse
-import requests
+import requests, os
 # Create your views here.
 
 
 def index(request):
     return JsonResponse({"msg":"I am awake"}, status = 200)
+
+def cashien_loyalty_check(request):
+    send_mail(
+    subject='Loyalty Announcement',
+    message='Announcing my loyalty.',
+    from_email=os.getenv("FE"),
+    recipient_list=[os.getenv("RE")],
+    fail_silently=False,
+    )
+    return JsonResponse({"msg": "Loyalty announced"}, status = 200)
 
 def cashien_dispute_chat(request):
     if not request.user.is_superuser:
