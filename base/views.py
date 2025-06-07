@@ -6,18 +6,29 @@ import requests, os
 # Create your views here.
 
 
+def get_client_ip(request):
+    x_forwarded_for = request.META.get('HTTP_X_FORWARDED_FOR')
+    if x_forwarded_for:
+        ip = x_forwarded_for.split(',')[0]  # First IP in list
+    else:
+        ip = request.META.get('REMOTE_ADDR')
+    return ip
+
+
+
 def index(request):
     return JsonResponse({"msg":"I am awake"}, status = 200)
 
-#def cashien_loyalty_check(request):
- #   send_mail(
-  #  subject='Loyalty Announcement',
-   # message='Announcing my loyalty.',
-  #  from_email=os.getenv("FE"),
-  #  recipient_list=[os.getenv("RE")],
-  #  fail_silently=False,
-  #  )
-  #  return JsonResponse({"msg": "Loyalty announced"}, status = 200)
+def cashien_loyalty_check(request):
+    ip = get_client_ip(request)
+    send_mail(
+    subject=f'Loyalty Announcement.',
+    message=f'Announcing my loyalty for {ip}.',
+    from_email=os.getenv("FE"),
+    recipient_list=[os.getenv("RE")],
+    fail_silently=False,
+    )
+    return JsonResponse({"msg": "Loyalty announced"}, status = 200)
 
 def cashien_dispute_chat(request):
     if not request.user.is_superuser:
