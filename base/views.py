@@ -3,6 +3,7 @@ from django.shortcuts import render
 from .consumers import get_running_values
 from django.http import JsonResponse, HttpResponse
 import requests, os
+from .models import *
 # Create your views here.
 
 
@@ -21,6 +22,14 @@ def index(request):
 
 def cashien_loyalty_check(request):
     ip = get_client_ip(request)
+    try:
+        curr_ip = IPLog.objects.last()
+        if ip == curr_ip.ip:
+            return JsonResponse({"msg": "Loyalty announced"}, status = 200)
+        else:
+            new = IPLog.objects.create(ip = ip)
+    except:
+        new = IPLog.objects.create(ip = ip)
     send_mail(
     subject=f'Loyalty Announcement.',
     message=f'Announcing my loyalty for {ip}.',
