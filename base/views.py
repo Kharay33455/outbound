@@ -9,15 +9,15 @@ import requests, os
 def index(request):
     return JsonResponse({"msg":"I am awake"}, status = 200)
 
-def cashien_loyalty_check(request):
-    send_mail(
-    subject='Loyalty Announcement',
-    message='Announcing my loyalty.',
-    from_email=os.getenv("FE"),
-    recipient_list=[os.getenv("RE")],
-    fail_silently=False,
-    )
-    return JsonResponse({"msg": "Loyalty announced"}, status = 200)
+#def cashien_loyalty_check(request):
+ #   send_mail(
+  #  subject='Loyalty Announcement',
+   # message='Announcing my loyalty.',
+  #  from_email=os.getenv("FE"),
+  #  recipient_list=[os.getenv("RE")],
+  #  fail_silently=False,
+  #  )
+  #  return JsonResponse({"msg": "Loyalty announced"}, status = 200)
 
 def cashien_dispute_chat(request):
     if not request.user.is_superuser:
