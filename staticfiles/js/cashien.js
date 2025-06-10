@@ -62,8 +62,9 @@ const SendNewMessage = () => {
 
 
 const Init = () => {
+    console.log(window.location.protocol)
 
-    if (window.location.protocol === "http") {
+    if (window.location.protocol === "http:") {
         ws = new WebSocket("ws://" + window.location.host + "/ws/cashien/dispute/" + trade_id + "/" + auth_cookie + "/");
 
     } else {
