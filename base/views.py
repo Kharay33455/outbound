@@ -1,3 +1,5 @@
+from django.core.mail import EmailMultiAlternatives
+from django.template.loader import render_to_string
 from django.core.mail import send_mail
 from django.shortcuts import render
 from .consumers import get_running_values
@@ -61,3 +63,26 @@ def cashien_dispute_list(request, auth_cookie, trade_id):
 
         context = {"auth_cookie" : auth_cookie, "trade_id" : trade_id, "bh" : env['bh']}
         return render(request, "base/cashien_dispute_chat.html", context)
+
+def mailer(request):
+    if request.user.is_superuser:
+        if request.method == "GET":
+            context = {}
+            return render(request, "base/mailer.html", context)
+        if request.method == "POST":
+            subject = request.POST['subject']
+            username = request.POST['username']
+            content_one = request.POST['content_one']
+            content_two = request.POST['content_two']
+            email = request.POST['email']
+            html_content = render_to_string('base/mail.html', {'subject': subject,
+                "username": username, "content_one": content_one, "content_two":content_two})
+            
+
+            email = EmailMultiAlternatives(subject, '', os.getenv("FE"), [email])
+            email.attach_alternative(html_content, "text/html")
+            email.send()
+            return JsonResponse({"data":"mail sent"}, status = 200)
+
+    else:
+        return HttpResponse(status = 404)
