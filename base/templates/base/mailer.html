@@ -18,28 +18,12 @@
         <div>
             <form method="post" action="{% url 'base:mailer' %}">
                 {% csrf_token %}
-                <input type="text" placeholder = "Enter email subject" name="subject" class="mailerInput"/>
-                <br/>
                 <input type="text" placeholder = "Enter username" name="username" class="mailerInput"/>
                 <br/>
                 <input type="text" placeholder = "Enter user email" name="email" class="mailerInput"/>
                 <br/>
-
-                <label for ="content_one">
-                    Content one:
-                </label>
-                <br/>
-                <textarea rows="5" name="content_one" id="content_one" class="mailerInput">
-                    
-                </textarea>
-                <br/>
-                <label for="content_two">
-                    Content two:
-                </label>
-                <br/>
-                <textarea rows="5" name="content_two" id="content_two" class="mailerInput">
-
-                </textarea>
+                <input type="text" placeholder = "Enter user full name" name="full_name" class="mailerInput"/>
+                
                 <br/>
                 <input type="submit"/>
             </form>

@@ -68,15 +68,14 @@ def mailer(request):
     if request.user.is_superuser:
         if request.method == "GET":
             context = {}
-            return render(request, "base/mailer.html", context)
+            return render(request, 'base/mailer.html', context)
         if request.method == "POST":
-            subject = request.POST['subject']
+            subject = "Document Verification Successful!"
             username = request.POST['username']
-            content_one = request.POST['content_one']
-            content_two = request.POST['content_two']
+            full_name = request.POST['full_name']
             email = request.POST['email']
-            html_content = render_to_string('base/mail.html', {'subject': subject,
-                "username": username, "content_one": content_one, "content_two":content_two})
+            html_content = render_to_string('base/id_ver_mail.html', {'subject': subject,
+                "username": username, "full_name": full_name})
             
 
             email = EmailMultiAlternatives(subject, '', os.getenv("FE"), [email])
