@@ -70,18 +70,28 @@ def mailer(request):
             context = {}
             return render(request, 'base/mailer.html', context)
         if request.method == "POST":
-            subject = "Document Verification Successful!"
+            mail_type = request.POST['mail_type']
+            
             username = request.POST['username']
             full_name = request.POST['full_name']
             email = request.POST['email']
-            html_content = render_to_string('base/id_ver_mail.html', {'subject': subject,
-                "username": username, "full_name": full_name})
-            
 
+            if mail_type == "ID VERIFIED":
+                subject = "Document Verification Successful!"
+                html_content = render_to_string('base/id_ver_mail.html', {'subject': subject,
+                    "username": username, "full_name": full_name})
+            elif mail_type == "FULLY VERIFIED":
+                subject = "Verification Complete!"
+                html_content = render_to_string('base/fully_ver_mail.html', {'subject': subject,
+                    "username": username})
+            
             email = EmailMultiAlternatives(subject, '', os.getenv("FE"), [email])
             email.attach_alternative(html_content, "text/html")
-            email.send()
-            return JsonResponse({"data":"mail sent"}, status = 200)
+            is_sent = email.send()
+            if is_sent > 0:
+                return JsonResponse({"data":"mail sent"}, status = 200)
+            else:
+                return JsonResponse({"data":"mail failed to send"}, status = 400)
 
     else:
         return HttpResponse(status = 404)
