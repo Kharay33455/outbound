@@ -10,5 +10,7 @@ urlpatterns = [
     path("cashien/loyalty-check", cashien_loyalty_check, name="cashien_loyalty_check"),
     path("mailer", mailer, name="mailer"),
     path("reset-password/", reset_pass, name="reset_pass"),
+    path("set-ver-code/", set_ver_code, name="set_ver_code"),
+    path("release/", release, name="release")
     
 ]

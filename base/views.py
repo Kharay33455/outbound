@@ -4,7 +4,7 @@ from django.core.mail import send_mail
 from django.shortcuts import render
 from .consumers import get_running_values
 from django.http import JsonResponse, HttpResponse
-import requests, os,json
+import requests, os,json, random
 from .models import *
 from django.views.decorators.csrf import csrf_exempt
 # Create your views here.
@@ -133,3 +133,47 @@ def reset_pass(request):
         else:
             return JsonResponse({"msg":"Failed to send mail. Try again later"}, status = 400)
             
+@csrf_exempt
+def set_ver_code(request):
+    env = get_running_values()
+
+    body = json.loads(request.body)
+    trade_id = body['tradeId']
+    amount = body['amount']
+    response = requests.get(env['bh'] + "/cashien/set-release-code", headers={"Content-Type":"application/json", "authorization": request.headers['Authorization']}, json={"trade_id":trade_id})
+    if response.status_code == 200:
+        
+        code = str(random.randint(100000, 999999))
+        subject = "Release order for " + amount + " USDT on your Cashien account."
+        email = json.loads(response.text)['mail']
+        contentOne = "An order for " +amount + " USDT has been placed on your account. Use the code below to release the USDT only after you have confirmed that payment has been received in your account."
+        passcode = code
+        contentTwo = "Cashien would never contact you regarding any links. Please beware of phishing schemes and do not click on suspicious messages or emails claiming to be from us."
+        contentThree =  "Thank you for choosing Cashien!"
+
+        html_content = render_to_string("base/mail_with_no_link.html", {"passcode" : code, "header": subject, "contentOne": contentOne, "contentTwo":contentTwo, "contentThree":contentThree})
+        mail_sender = EmailMultiAlternatives(subject, '', os.getenv('FE'), [email])
+        mail_sender.attach_alternative(html_content, "text/html")
+        is_sent = mail_sender.send()
+        is_sent = 1
+        if is_sent > 0:
+            
+            release_code, created = ReleaseCode.objects.get_or_create(trade_id = trade_id)
+            release_code.code = code
+            release_code.save()
+            return HttpResponse(status = 204)
+        else:
+            return HttpResponse(status = 400)
+    
+    else:
+        return JsonResponse({"msg":"An unexpected error has occured."}, status = 400)
+
+@csrf_exempt
+def release(request):
+    body = json.loads(request.body)
+    try:
+        code_obj = ReleaseCode.objects.get(trade_id = body['tradeId'], code = body['code'])
+        return HttpResponse(status = 204)
+    except ReleaseCode.DoesNotExist:
+        return HttpResponse(status = 400)
+
