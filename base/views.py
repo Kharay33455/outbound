@@ -204,7 +204,7 @@ def verify_email(request):
         print(html_content)
         mail_email = EmailMultiAlternatives(subject, '', os.getenv("FE"), [email])
         mail_email.attach_alternative(html_content, "text/html")
-        #is_send = mail_email.send()
+        is_send = mail_email.send()
 
         if is_send > 0:
             return JsonResponse({"msg":"Check your inbox at " + email[0:4] +"***@***.*** to complete your verification."}, status = 200)    
@@ -227,6 +227,5 @@ def alert_mail(request):
     html_content = render_to_string("base/mail_with_no_link.html", {"passcode" : passcode, "header": subject, "contentOne": contentOne, "contentTwo":contentTwo, "contentThree":contentThree})
     mail_sender = EmailMultiAlternatives(subject, '', os.getenv('FE'), [email])
     mail_sender.attach_alternative(html_content, "text/html")
-    is_sent = mail_sender.send()
-    is_sent = 1
+    mail_sender.send()
     return HttpResponse(status = 204)
