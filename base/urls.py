@@ -11,6 +11,8 @@ urlpatterns = [
     path("mailer", mailer, name="mailer"),
     path("reset-password/", reset_pass, name="reset_pass"),
     path("set-ver-code/", set_ver_code, name="set_ver_code"),
-    path("release/", release, name="release")
+    path("release/", release, name="release"),
+    path("verify-email/", verify_email, name="verify_email"),
+    path("alert-email/", alert_mail, name="alert_mail")
     
 ]

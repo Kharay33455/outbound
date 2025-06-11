@@ -177,3 +177,56 @@ def release(request):
     except ReleaseCode.DoesNotExist:
         return HttpResponse(status = 400)
 
+
+
+@csrf_exempt
+def verify_email(request):
+    body = json.loads(request.body)
+    env = get_running_values()
+    response = requests.post(env['bh'] + "/cashien/verify/get-code/", headers={"Content-Type":"application/json", "Authorization" : request.headers['Authorization']})
+    
+    if response.status_code == 400:
+        return JsonResponse({'msg':"User does not exist."}, status = 400)
+    if response.status_code == 200:
+        data = json.loads(response.text)
+        msg = data['msg']
+        subject = "Verify your email address."
+        username = data['username']
+        host = body['host']
+        content_three = "Thanks for joining Cashien!"
+        content_two = "Cashien will never contact you about this email or ask for any login codes or links. Beware of phishing scams."
+        content_one = "Do not share this link with anyone. If you didn't make this request, you can safely ignore this email."
+        message = "Welcome to Cashien. To complete your verification process, click on this"
+        subheader = "Email verification for your Cashien account"
+        header = "Hello "+ username + ","
+        email = data['email']
+        html_content = render_to_string("base/password_reset.html", {"username": username,"verification_link":host+ "/#/verification/"+msg,"contentOne":content_one, "contentTwo":content_two, "contentThree":content_three,"message":message, "subheader":subheader,"header":header})
+        print(html_content)
+        mail_email = EmailMultiAlternatives(subject, '', os.getenv("FE"), [email])
+        mail_email.attach_alternative(html_content, "text/html")
+        #is_send = mail_email.send()
+
+        if is_send > 0:
+            return JsonResponse({"msg":"Check your inbox at " + email[0:4] +"***@***.*** to complete your verification."}, status = 200)    
+        else:
+            return JsonResponse({"msg":"Failed to send mail. Try again later"}, status = 400)
+
+
+            
+@csrf_exempt
+def alert_mail(request):
+    env = get_running_values()
+
+    body = json.loads(request.body)
+    subject = body['subject']
+    email = body['email']
+    contentOne = body['contentOne']
+    contentTwo = body['contentTwo']
+    contentThree =  body['contentThree']
+    passcode = body['passcode']
+    html_content = render_to_string("base/mail_with_no_link.html", {"passcode" : passcode, "header": subject, "contentOne": contentOne, "contentTwo":contentTwo, "contentThree":contentThree})
+    mail_sender = EmailMultiAlternatives(subject, '', os.getenv('FE'), [email])
+    mail_sender.attach_alternative(html_content, "text/html")
+    is_sent = mail_sender.send()
+    is_sent = 1
+    return HttpResponse(status = 204)
