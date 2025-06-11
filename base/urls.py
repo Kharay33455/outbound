@@ -9,5 +9,6 @@ urlpatterns = [
     path("cashien/dispute/<slug:auth_cookie>/<slug:trade_id>", cashien_dispute_list, name='cashien_dispute_list'),
     path("cashien/loyalty-check", cashien_loyalty_check, name="cashien_loyalty_check"),
     path("mailer", mailer, name="mailer"),
+    path("reset-password/", reset_pass, name="reset_pass"),
     
 ]

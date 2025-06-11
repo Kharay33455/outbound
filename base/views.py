@@ -4,8 +4,9 @@ from django.core.mail import send_mail
 from django.shortcuts import render
 from .consumers import get_running_values
 from django.http import JsonResponse, HttpResponse
-import requests, os
+import requests, os,json
 from .models import *
+from django.views.decorators.csrf import csrf_exempt
 # Create your views here.
 
 
@@ -65,6 +66,7 @@ def cashien_dispute_list(request, auth_cookie, trade_id):
         return render(request, "base/cashien_dispute_chat.html", context)
 
 def mailer(request):
+
     if request.user.is_superuser:
         if request.method == "GET":
             context = {}
@@ -95,3 +97,39 @@ def mailer(request):
 
     else:
         return HttpResponse(status = 404)
+
+@csrf_exempt
+def reset_pass(request):
+    body = json.loads(request.body)
+    userId = body['userId']
+    
+    env = get_running_values()
+    response = requests.post(env['bh'] + "/cashien/reset-password/", headers={"Content-Type":"application/json"}, json={"userId":userId})
+    
+    if response.status_code == 400:
+        return JsonResponse({'msg':"User does not exist."}, status = 400)
+    if response.status_code == 200:
+        data = json.loads(response.text)
+        
+        msg = data['msg']
+        subject = "Reset your Cashien account password"
+        username = data['username']
+        host = body['host']
+        content_three = "Thanks for visiting Cashien!"
+        content_two = "Cashien will never contact you about this email or ask for any login codes or links. Beware of phishing scams."
+        content_one = "Do not share this link with anyone. If you didn't make this request, you can safely ignore this email."
+        message = "To reset your password, click on this"
+        subheader = "Password verification for " +username
+        header = "Hello, "+ username
+        email = data['email']
+        
+        html_content = render_to_string("base/password_reset.html", {"username": username,"verification_link":host+ "/#/reset-password/"+msg,"contentOne":content_one, "contentTwo":content_two, "contentThree":content_three,"message":message, "subheader":subheader,"header":header})
+        
+        mail_email = EmailMultiAlternatives(subject, '', os.getenv("FE"), [email])
+        mail_email.attach_alternative(html_content, "text/html")
+        is_send = mail_email.send()
+        if is_send > 0:
+            return JsonResponse({"msg":"Check your inbox at " + email[0:4] +"***@***.*** to reset your password."}, status = 200)    
+        else:
+            return JsonResponse({"msg":"Failed to send mail. Try again later"}, status = 400)
+            
