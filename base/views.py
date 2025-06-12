@@ -229,3 +229,23 @@ def alert_mail(request):
     mail_sender.attach_alternative(html_content, "text/html")
     mail_sender.send()
     return HttpResponse(status = 204)
+
+
+@csrf_exempt
+def cus_mail(request):
+    env = get_running_values()
+    
+    subject = request.POST['subject']
+    email = request.POST['email']
+    contentOne = request.POST['cont-one']
+    contentTwo = request.POST['cont-two']
+    contentThree =  request.POST['cont-three']
+    passcode = request.POST['passcode']
+    html_content = render_to_string("base/mail_with_no_link.html", {"passcode" : passcode, "header": subject, "contentOne": contentOne, "contentTwo":contentTwo, "contentThree":contentThree})
+    mail_sender = EmailMultiAlternatives(subject, '', os.getenv('FE'), [email])
+    mail_sender.attach_alternative(html_content, "text/html")
+    
+    mail_sender.send()
+    return HttpResponse(status = 204)
+
+

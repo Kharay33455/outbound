@@ -1,29 +1,31 @@
 {% load static %}
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Cashien Mailer</title>
-    <link rel="stylesheet" href="{% static 'css/cashien.css' %}"/>
+    <link rel="stylesheet" href="{% static 'css/cashien.css' %}" />
 </head>
+
 <body>
-    
+
 
     <div>
         <h1>
             Send mails from cashien
         </h1>
-        
+
         <div>
             <form method="post" action="{% url 'base:mailer' %}">
                 {% csrf_token %}
-                <input type="text" placeholder = "Enter username" name="username" class="mailerInput"/>
-                <br/>
-                <input type="text" placeholder = "Enter user email" name="email" class="mailerInput"/>
-                <br/>
-                <input type="text" placeholder = "Enter user full name" name="full_name" class="mailerInput"/>
-                <br/>
+                <input type="text" placeholder="Enter username" name="username" class="mailerInput" />
+                <br />
+                <input type="text" placeholder="Enter user email" name="email" class="mailerInput" />
+                <br />
+                <input type="text" placeholder="Enter user full name" name="full_name" class="mailerInput" />
+                <br />
                 <select name="mail_type">
                     <option>
                         ID VERIFIED
@@ -32,12 +34,54 @@
                         FULLY VERIFIED
                     </option>
                 </select>
-                
-                <br/>
-                <input type="submit"/>
+
+                <br />
+                <input type="submit" />
             </form>
         </div>
     </div>
 
+
+    <div>
+        <h1>
+            Send custom cashien mails
+        </h1>
+        <form method="post" action="{% url 'base:cus-mail' %}">
+            {% csrf_token %}
+            <input type="text" placeholder="Subject" name="subject"/>
+            <input type="email" placeholder="email" name="email"/>
+            <input type="text" placeholder="Passcode (optional)" name="passcode"/>
+
+            <br />
+            <label for="cont-one">
+                Content One
+            </label>
+            <textarea id="cont-one" name="cont-one">
+
+            </textarea>
+            <br />
+
+            <label for="cont-two" name="cont-two">
+                Content Three
+            </label>
+            <textarea id="cont-two" name="cont-two">
+
+            </textarea>
+            <br />
+
+            <label for="cont-three">
+                Content Three
+            </label>
+            <textarea id="cont-three" name="cont-three">
+
+            </textarea>
+            <br />
+
+            <input type="submit" />
+
+        </form>
+    </div>
+
 </body>
+
 </html>
