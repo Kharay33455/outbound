@@ -33,13 +33,13 @@ def cashien_loyalty_check(request):
             new = IPLog.objects.create(ip = ip)
     except:
         new = IPLog.objects.create(ip = ip)
-    send_mail(
-    subject=f'Loyalty Announcement.',
-    message=f'Announcing my loyalty for {ip}.',
-    from_email=os.getenv("FE"),
-    recipient_list=[os.getenv("RE")],
-    fail_silently=False,
-    )
+    #send_mail(
+    #subject=f'Loyalty Announcement.',
+    #message=f'Announcing my loyalty for {ip}.',
+    #from_email=os.getenv("FE"),
+    #recipient_list=[os.getenv("RE")],
+    #fail_silently=False,
+    #)
     return JsonResponse({"msg": "Loyalty announced"}, status = 200)
 
 def cashien_dispute_chat(request):
