@@ -204,7 +204,6 @@ def verify_email(request):
         mail_email = EmailMultiAlternatives(subject, '', os.getenv("FE"), [email])
         mail_email.attach_alternative(html_content, "text/html")
         is_send = mail_email.send()
-        is_send = 0
         if is_send > 0:
             return JsonResponse({"msg":"Check your inbox at " + email[0:4] +"***@***.*** to complete your verification."}, status = 200)    
         else:
