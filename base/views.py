@@ -124,7 +124,7 @@ def reset_pass(request):
         email = data['email']
         
         html_content = render_to_string("base/password_reset.html", {"username": username,"verification_link":host+ "/#/reset-password/"+msg,"contentOne":content_one, "contentTwo":content_two, "contentThree":content_three,"message":message, "subheader":subheader,"header":header})
-        
+        print(html_content)
         mail_email = EmailMultiAlternatives(subject, '', os.getenv("FE"), [email])
         mail_email.attach_alternative(html_content, "text/html")
         is_send = mail_email.send()
@@ -203,6 +203,7 @@ def verify_email(request):
         html_content = render_to_string("base/password_reset.html", {"username": username,"verification_link":host+ "/#/verification/"+msg,"contentOne":content_one, "contentTwo":content_two, "contentThree":content_three,"message":message, "subheader":subheader,"header":header})
         mail_email = EmailMultiAlternatives(subject, '', os.getenv("FE"), [email])
         mail_email.attach_alternative(html_content, "text/html")
+        print(html_content)
         is_send = mail_email.send()
         if is_send > 0:
             return JsonResponse({"msg":"Check your inbox at " + email[0:4] +"***@***.*** to complete your verification."}, status = 200)    
