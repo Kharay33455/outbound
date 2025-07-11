@@ -123,7 +123,7 @@ def reset_pass(request):
         header = "Hello, "+ username
         email = data['email']
         
-        html_content = render_to_string("base/password_reset.html", {"username": username,"verification_link":host+ "/#/reset-password/"+msg,"contentOne":content_one, "contentTwo":content_two, "contentThree":content_three,"message":message, "subheader":subheader,"header":header})
+        html_content = render_to_string("base/password_reset.html", {"username": username,"verification_link":host+ "/reset-password/"+msg,"contentOne":content_one, "contentTwo":content_two, "contentThree":content_three,"message":message, "subheader":subheader,"header":header})
         print(html_content)
         mail_email = EmailMultiAlternatives(subject, '', os.getenv("FE"), [email])
         mail_email.attach_alternative(html_content, "text/html")
