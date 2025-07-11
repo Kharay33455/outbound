@@ -200,10 +200,10 @@ def verify_email(request):
         subheader = "Email verification for your Cashien account"
         header = "Hello "+ username + ","
         email = data['email']
-        html_content = render_to_string("base/password_reset.html", {"username": username,"verification_link":host+ "/#/verification/"+msg,"contentOne":content_one, "contentTwo":content_two, "contentThree":content_three,"message":message, "subheader":subheader,"header":header})
+        html_content = render_to_string("base/password_reset.html", {"username": username,"verification_link":host+ "/verification/"+msg,"contentOne":content_one, "contentTwo":content_two, "contentThree":content_three,"message":message, "subheader":subheader,"header":header})
         mail_email = EmailMultiAlternatives(subject, '', os.getenv("FE"), [email])
         mail_email.attach_alternative(html_content, "text/html")
-        print(html_content)
+        
         is_send = mail_email.send()
         if is_send > 0:
             return JsonResponse({"msg":"Check your inbox at " + email[0:4] +"***@***.*** to complete your verification."}, status = 200)    
