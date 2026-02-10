@@ -10,6 +10,7 @@
             const username = document.getElementById("usernameInput").value;
             const password = document.getElementById("passwordInput").value;
             const bh = document.getElementById('bh').value
+            console.log("Here")
             try {
                 const response = await fetch(bh + "/cashien/auth-cashien-admin", {
                     method: "POST",
