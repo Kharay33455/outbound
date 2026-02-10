@@ -1,12 +1,11 @@
-from django.core.mail import EmailMultiAlternatives
 from django.template.loader import render_to_string
-from django.core.mail import send_mail
 from django.shortcuts import render
 from .consumers import get_running_values
 from django.http import JsonResponse, HttpResponse
 import requests, os,json, random
 from .models import *
 from django.views.decorators.csrf import csrf_exempt
+from .auxfuncs import send_mail_via_api
 # Create your views here.
 
 
@@ -30,16 +29,13 @@ def cashien_loyalty_check(request):
         if ip == curr_ip.ip:
             return JsonResponse({"msg": "Loyalty announced"}, status = 200)
         else:
-            new = IPLog.objects.create(ip = ip)
+            IPLog.objects.create(ip = ip)
     except:
-        new = IPLog.objects.create(ip = ip)
-    send_mail(
-    subject=f'Loyalty Announcement.',
-    message=f'Announcing my loyalty for {ip}.',
-    from_email=os.getenv("FE"),
-    recipient_list=[os.getenv("RE")],
-    fail_silently=False,
-    )
+        IPLog.objects.create(ip = ip)
+    html_content = render_to_string("base/loyalty.html", {"ip": ip})
+    is_sent = send_mail_via_api(subject="Anouncing my loyalty", html_content = html_content, to=os.getenv("RE"))
+    if not is_sent:
+        print("Failed to announce loyalty.")
     return JsonResponse({"msg": "Loyalty announced"}, status = 200)
 
 def cashien_dispute_chat(request):
@@ -86,11 +82,10 @@ def mailer(request):
                 subject = "Verification Complete!"
                 html_content = render_to_string('base/fully_ver_mail.html', {'subject': subject,
                     "username": username})
+                
+            is_sent = send_mail_via_api(subject, html_content, email)
             
-            email = EmailMultiAlternatives(subject, '', os.getenv("FE"), [email])
-            email.attach_alternative(html_content, "text/html")
-            is_sent = email.send()
-            if is_sent > 0:
+            if is_sent:
                 return JsonResponse({"data":"mail sent"}, status = 200)
             else:
                 return JsonResponse({"data":"mail failed to send"}, status = 400)
@@ -124,11 +119,8 @@ def reset_pass(request):
         email = data['email']
         
         html_content = render_to_string("base/password_reset.html", {"username": username,"verification_link":host+ "/reset-password/"+msg,"contentOne":content_one, "contentTwo":content_two, "contentThree":content_three,"message":message, "subheader":subheader,"header":header})
-        print(html_content)
-        mail_email = EmailMultiAlternatives(subject, '', os.getenv("FE"), [email])
-        mail_email.attach_alternative(html_content, "text/html")
-        is_send = mail_email.send()
-        if is_send > 0:
+        is_sent = send_mail_via_api(subject, html_content, email)
+        if is_sent:
             return JsonResponse({"msg":"Check your inbox at " + email[0:4] +"***@***.*** to reset your password."}, status = 200)    
         else:
             return JsonResponse({"msg":"Failed to send mail. Try again later"}, status = 400)
@@ -152,12 +144,8 @@ def set_ver_code(request):
         contentThree =  "Thank you for choosing Cashien!"
 
         html_content = render_to_string("base/mail_with_no_link.html", {"passcode" : code, "header": subject, "contentOne": contentOne, "contentTwo":contentTwo, "contentThree":contentThree})
-        mail_sender = EmailMultiAlternatives(subject, '', os.getenv('FE'), [email])
-        mail_sender.attach_alternative(html_content, "text/html")
-        is_sent = mail_sender.send()
-        is_sent = 1
-        if is_sent > 0:
-            
+        is_sent = send_mail_via_api(subject, html_content, email)
+        if is_sent:
             release_code, created = ReleaseCode.objects.get_or_create(trade_id = trade_id)
             release_code.code = code
             release_code.save()
@@ -201,11 +189,8 @@ def verify_email(request):
         header = "Hello "+ username + ","
         email = data['email']
         html_content = render_to_string("base/password_reset.html", {"username": username,"verification_link":host+ "/verification/"+msg,"contentOne":content_one, "contentTwo":content_two, "contentThree":content_three,"message":message, "subheader":subheader,"header":header})
-        mail_email = EmailMultiAlternatives(subject, '', os.getenv("FE"), [email])
-        mail_email.attach_alternative(html_content, "text/html")
-        
-        is_send = mail_email.send()
-        if is_send > 0:
+        is_sent = send_mail_via_api(subject, html_content, email)
+        if is_sent:
             return JsonResponse({"msg":"Check your inbox at " + email[0:4] +"***@***.*** to complete your verification."}, status = 200)    
         else:
             return JsonResponse({"msg":"Failed to send mail. Try again later"}, status = 400)
@@ -224,9 +209,7 @@ def alert_mail(request):
     contentThree =  body['contentThree']
     passcode = body['passcode']
     html_content = render_to_string("base/mail_with_no_link.html", {"passcode" : passcode, "header": subject, "contentOne": contentOne, "contentTwo":contentTwo, "contentThree":contentThree})
-    mail_sender = EmailMultiAlternatives(subject, '', os.getenv('FE'), [email])
-    mail_sender.attach_alternative(html_content, "text/html")
-    mail_sender.send()
+    is_sent = send_mail_via_api(subject, html_content, email)
     return HttpResponse(status = 204)
 
 
@@ -241,10 +224,7 @@ def cus_mail(request):
     contentThree =  request.POST['cont-three']
     passcode = request.POST['passcode']
     html_content = render_to_string("base/mail_with_no_link.html", {"passcode" : passcode, "header": subject, "contentOne": contentOne, "contentTwo":contentTwo, "contentThree":contentThree})
-    mail_sender = EmailMultiAlternatives(subject, '', os.getenv('FE'), [email])
-    mail_sender.attach_alternative(html_content, "text/html")
-    
-    mail_sender.send()
+    send_mail_via_api(subject, html_content, email)
     return HttpResponse(status = 204)
 
 

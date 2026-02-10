@@ -23,17 +23,17 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/5.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = os.getenv("SK")
+SECRET_KEY = os.environ.get("SK")
 
 # SECURITY WARNING: don't run with debug turned on in production!
-if os.getenv("DEBUG") == "FALSE":
+if os.environ.get("DEBUG") == "FALSE":
     DEBUG = False
-elif os.getenv("DEBUG") == "TRUE":
+elif os.environ.get("DEBUG") == "TRUE":
     DEBUG = True
 
-ALLOWED_HOSTS = os.getenv("AH").split(",")
+ALLOWED_HOSTS = os.environ.get("AH").split(",")
 
-CSRF_TRUSTED_ORIGINS = os.getenv("CTO").split(",")
+CSRF_TRUSTED_ORIGINS = os.environ.get("CTO").split(",")
 # Application definition
 
 INSTALLED_APPS = [
@@ -100,7 +100,7 @@ DATABASES = {
 """
 
 DATABASES = {
-    "default": dj_database_url.parse(os.getenv("DB"))
+    "default": dj_database_url.parse(os.environ.get("DB"))
 }
 
 
@@ -148,15 +148,15 @@ STATIC_ROOT = os.path.join(BASE_DIR, "staticfiles")
 
 # settings.py
 
-EMAIL_BACKEND = os.getenv("EB")
-EMAIL_HOST = os.getenv("EH")
-EMAIL_PORT = int(os.getenv("EP"))
-if os.getenv("EUTLS") == "TRUE":
+EMAIL_BACKEND = os.environ.get("EB")
+EMAIL_HOST = os.environ.get("EH")
+EMAIL_PORT = int(os.environ.get("EP"))
+if os.environ.get("EUTLS") == "TRUE":
     EMAIL_USE_TLS = True
-elif os.getenv("EUTLS") == "FALSE":
+elif os.environ.get("EUTLS") == "FALSE":
     EMAIL_USE_TLS = False
-EMAIL_HOST_USER = os.getenv("EHU")
-EMAIL_HOST_PASSWORD = os.getenv("EHP")
+EMAIL_HOST_USER = os.environ.get("EHU")
+EMAIL_HOST_PASSWORD = os.environ.get("EHP")
 
 
 # Default primary key field type
